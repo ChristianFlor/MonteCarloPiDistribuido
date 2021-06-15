@@ -45,24 +45,39 @@ public class ControladorMC implements Runnable, ServicioMC, ServicioAsignarPunto
             frame.getContentPane().add(new Interfaz(), BorderLayout.CENTER);
             frame.setSize(800, 600);
             frame.setVisible(true);
+            eventos();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public long asignarPuntos() {
-        long trabajo = 0;
+    public long[] asignarPuntos() {
+        long[] trabajo = new long[2];
         if (openToRequests) {
             if (currentTest.getRemainingPoints() > 0) {
-                trabajo = BATCH_PUNTOS;
+                trabajo[0] = BATCH_PUNTOS;
+                trabajo[1] = currentTest.getSeed();
             } else {
                 double pi = currentTest.getPointsInside() / currentTest.getPoints();
                 long execTime = currentTest.execTime(System.currentTimeMillis());
                 resultado.agregarIteracion(pi, execTime);
+                setupTest();
             }
         }
         return trabajo;
+    }
+
+    public void setupTest() {
+        escribirResultados();
+        currentTest = tests.poll();
+        if (currentTest != null) {
+            openToRequests = true;
+            resultado = new Resultado(currentTest.getId(), currentTest.getSeed(), currentTest.getPoints(), PRUEBAS_POR_TEST, currentTest.getConnectedNodes());
+            currentTest.setTimeBeforeTest(System.currentTimeMillis());
+        } else {
+            openToRequests = false;
+        }
     }
 
     @Override
@@ -79,18 +94,6 @@ public class ControladorMC implements Runnable, ServicioMC, ServicioAsignarPunto
     public void respuesta(long puntosAdentro) {
         currentTest.addPointsInside(puntosAdentro);
         currentTest.reduceRemainingPoints();
-    }
-
-    public void setupTest() {
-        escribirResultados();
-        currentTest = tests.poll();
-        if (currentTest != null) {
-            openToRequests = true;
-            resultado = new Resultado(currentTest.getId(), currentTest.getSeed(), currentTest.getPoints(), PRUEBAS_POR_TEST, currentTest.getConnectedNodes());
-            currentTest.setTimeBeforeTest(System.currentTimeMillis());
-        } else {
-            openToRequests = false;
-        }
     }
 
     private void lecturaPruebas() {
