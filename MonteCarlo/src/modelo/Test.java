@@ -4,21 +4,29 @@ import java.io.Serializable;
 
 public class Test implements Serializable {
 
-    private int seed;
-    private long points;
+    private final int seed;
+    private final long points;
+    private final long batchSize;
 
     private long remainingPoints;
     private long pointsInside = 0;
-    private long batchSize;
-
     private int connectedNodes = 0;
 
-    public Test(int seed, long points, long batchSize) {
+    private long timeBeforeTest;
+
+    private final int id;
+
+    public Test(int id, int seed, long points, long batchSize) {
         super();
+        this.id = id;
         this.seed = seed;
         this.points = points;
         this.remainingPoints = points;
         this.batchSize = batchSize;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public int getSeed() {
@@ -41,8 +49,8 @@ public class Test implements Serializable {
         return pointsInside;
     }
 
-    public void setPointsInside(long pointsInside) {
-        this.pointsInside = pointsInside;
+    public void addPointsInside(long pointsInside) {
+        this.pointsInside += pointsInside;
     }
 
     public int getConnectedNodes() {
@@ -51,9 +59,23 @@ public class Test implements Serializable {
 
     public void addConnectedNodes() {
         connectedNodes++;
+//        if (connectedNodes > mostConnectedNodes)
+//            mostConnectedNodes = connectedNodes;
     }
+
+//    public int getMostConnectedNodes() {
+//        return mostConnectedNodes;
+//    }
 
     public void reduceConnectedNodes() {
         connectedNodes--;
+    }
+
+    public void setTimeBeforeTest(long timeBeforeTest) {
+        this.timeBeforeTest = timeBeforeTest;
+    }
+
+    public long execTime(long timeAfterTest) {
+        return timeAfterTest - timeBeforeTest;
     }
 }

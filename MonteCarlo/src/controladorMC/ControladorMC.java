@@ -18,10 +18,10 @@ import interfazUsuario.Interfaz;
 
 
 @Scope("COMPOSITE")
-public class ControladorMC implements Runnable, ServicioMC, ServicioAsignarPuntos, ServicioRestarNodo, ServicioSumarNodo, ServicioRespuesta{
+public class ControladorMC implements Runnable, ServicioMC, ServicioAsignarPuntos, ServicioRestarNodo, ServicioSumarNodo, ServicioRespuesta {
 
-    private final static String COMA = ",";
     private final static long BATCH_PUNTOS = 100000;
+    private final static int PRUEBAS_POR_TEST = 10;
 
     private Interfaz frame;
 
@@ -32,8 +32,6 @@ public class ControladorMC implements Runnable, ServicioMC, ServicioAsignarPunto
     private Resultado resultado;
 
     private boolean openToRequests = false;
-    long timeBeforeTest = System.currentTimeMillis();
-    long timeAfterTest= System.currentTimeMillis();
 
     public void run() {
         System.out.println("Run");
@@ -51,44 +49,46 @@ public class ControladorMC implements Runnable, ServicioMC, ServicioAsignarPunto
             e.printStackTrace();
         }
     }
-    
+
     @Override
-    public long asignarPuntos(){
+    public long asignarPuntos() {
         long trabajo = 0;
-        if(currentTest.getRemainingPoints() > 0){
-            trabajo = BATCH_PUNTOS;
-        }else{
-            escribirResultados();
-            timeAfterTest = System.currentTimeMillis();
+        if (openToRequests) {
+            if (currentTest.getRemainingPoints() > 0) {
+                trabajo = BATCH_PUNTOS;
+            } else {
+                double pi = currentTest.getPointsInside() / currentTest.getPoints();
+                long execTime = currentTest.execTime(System.currentTimeMillis());
+                resultado.agregarIteracion(pi, execTime);
+            }
         }
         return trabajo;
     }
-    
+
     @Override
-    public void restarNodo(){
+    public void restarNodo() {
         currentTest.reduceConnectedNodes();
     }
 
     @Override
-    public void sumarNodo(){
+    public void sumarNodo() {
         currentTest.addConnectedNodes();
     }
 
     @Override
-    public void respuesta(long puntosAdentro){
-        this.puntosAdentro += puntosAdentro;
-        puntosRestantes -= BATCH_PUNTOS;
+    public void respuesta(long puntosAdentro) {
+        currentTest.addPointsInside(puntosAdentro);
+        currentTest.reduceRemainingPoints();
     }
 
     public void setupTest() {
+        escribirResultados();
         currentTest = tests.poll();
-        if (currentTest != null){
-            puntosTotales = currentTest.getPoints();
-            puntosRestantes = puntosTotales;
-            seed = currentTest.getSeed();
+        if (currentTest != null) {
             openToRequests = true;
-            currentTest.concatOutput(encabezado);
-        }else{
+            resultado = new Resultado(currentTest.getId(), currentTest.getSeed(), currentTest.getPoints(), PRUEBAS_POR_TEST, currentTest.getConnectedNodes());
+            currentTest.setTimeBeforeTest(System.currentTimeMillis());
+        } else {
             openToRequests = false;
         }
     }
@@ -103,12 +103,12 @@ public class ControladorMC implements Runnable, ServicioMC, ServicioAsignarPunto
             DataInputStream entrada = new DataInputStream(fstream);
             BufferedReader buffer = new BufferedReader(new InputStreamReader(entrada));
             String line = buffer.readLine();
+            int idTest = 1;
             while (line != null && !line.isEmpty()) {
                 String nums[] = line.split("-");
-                puntosTotales = Long.parseLong(nums[0]);
-                seed = Integer.parseInt(nums[1]);
-                puntosRestantes = puntosTotales;
-                Test test = new Test(nums[1], seed, puntosTotales, BATCH_PUNTOS);
+                long puntosTotales = Long.parseLong(nums[0]);
+                int seed = Integer.parseInt(nums[1]);
+                Test test = new Test(idTest, seed, puntosTotales, BATCH_PUNTOS);
                 tests.add(test);
                 line = buffer.readLine();
             }
@@ -119,25 +119,7 @@ public class ControladorMC implements Runnable, ServicioMC, ServicioAsignarPunto
             e1.printStackTrace();
         }
     }
-    private void escribirResultado(){
-        for (int j = 0; j < 10; j++) {
-            long timeNow = System.currentTimeMillis();
-            double pi = calcularPi(seed, totalPuntos);
-            long timeAfter = System.currentTimeMillis();
-            long totalTime = timeAfter - timeNow;
 
-            average += totalTime;
-            output += pi + COMA + totalTime + "\n";
-            frame.getTabla().setValueAt(("Pi: " + pi + "-Tiempo Ejec (ms): " + totalTime).split("-"), filaComienzoTestActual + 2 + j, 0);
-        }
-        average = average / 10;
-        output += "Promedio" + COMA + average + "\n";
-        output += "Nodos" + COMA + "1\n\n";
-        frame.getTabla().setValueAt(("Tiempo promedio (ms): " + average + "-Nodos: 1").split("-"), filaComienzoTestActual + 12, 0);
-        escribirResultados(output);
-
-        double pi = (puntosAdentro << 2) / puntosTotales;
-    }
     public void escribirResultados() {
         System.out.println("Escribiendo");
         FileWriter fichero = null;
@@ -145,8 +127,7 @@ public class ControladorMC implements Runnable, ServicioMC, ServicioAsignarPunto
         try {
             fichero = new FileWriter("MonteCarlo_Pi/data/resultados.csv");
             pw = new PrintWriter(fichero);
-            pw.println(currentTest.getOutput());
-
+            pw.println(resultado.terminarTest());
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -162,20 +143,16 @@ public class ControladorMC implements Runnable, ServicioMC, ServicioAsignarPunto
         System.out.println("Finish");
     }
 
-    public void eventos(){
+    public void eventos() {
+        frame.getBtnTests().addActionListener(e -> {
+            lecturaPruebas();
+            setupTest();
+        });
 
-        frame.getBtnTests().addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-                lecturaPruebas();
-                setupTest();
-			}
-		});
-
-        frame.getBtnNewInput().addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-                puntosTotales = Long.parseLong(frame.getTextAreaPoints().getText());
-                seed = Integer.parseInt(frame.getTextAreaSeed().getText());
-			}
-		});
+        frame.getBtnNewInput().addActionListener(e -> {
+            int seed = Integer.parseInt(frame.getTextAreaSeed().getText());
+            long puntosTotales = Long.parseLong(frame.getTextAreaPoints().getText());
+            tests.add(new Test(1, seed, puntosTotales, BATCH_PUNTOS));
+        });
     }
 }
