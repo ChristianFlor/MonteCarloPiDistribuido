@@ -5,7 +5,7 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 
-public class Interfaz extends JPanel {
+public class Interfaz extends JFrame {
 
 
     private JLabel lblSeed, lblPoints, lblPi;

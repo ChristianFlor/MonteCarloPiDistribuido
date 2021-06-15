@@ -18,10 +18,14 @@ import interfazUsuario.Interfaz;
 
 
 @Scope("COMPOSITE")
-public class ControladorMC implements Runnable, ServicioMC, ServicioAsignarPuntos, ServicioRestarNodo, ServicioSumarNodo, ServicioRespuesta {
+public class ControladorMC implements Runnable, ServicioMC, ServicioAsignarPuntos, ServicioRestarNodo, ServicioSumarNodo, ServicioRespuesta, ServicioIniciar {
+
+    @Reference
+    private ServicioIniciar servicioIniciar;
 
     private final static long BATCH_PUNTOS = 100000;
     private final static int PRUEBAS_POR_TEST = 10;
+    private final static int NODOS_POR_TEST = 4;
 
     private Interfaz frame;
 
@@ -36,7 +40,7 @@ public class ControladorMC implements Runnable, ServicioMC, ServicioAsignarPunto
     public void run() {
         System.out.println("Run");
         try {
-            JFrame frame = new JFrame("Simulacion Pi Montecarlo");
+            frame.setTitle("Simulacion Pi Montecarlo");
             frame.addWindowListener(new WindowAdapter() {
                 public void windowClosing(WindowEvent evt) {
                     System.exit(0);
@@ -53,7 +57,7 @@ public class ControladorMC implements Runnable, ServicioMC, ServicioAsignarPunto
 
     @Override
     public long[] asignarPuntos() {
-        long[] trabajo = new long[2];
+        long[] trabajo = {0,0};
         if (openToRequests) {
             if (currentTest.getRemainingPoints() > 0) {
                 trabajo[0] = BATCH_PUNTOS;
@@ -88,6 +92,9 @@ public class ControladorMC implements Runnable, ServicioMC, ServicioAsignarPunto
     @Override
     public void sumarNodo() {
         currentTest.addConnectedNodes();
+        if (currentTest.getConnectedNodes() == NODOS_POR_TEST) {
+            servicioIniciar.iniciar();
+        }
     }
 
     @Override
@@ -108,7 +115,7 @@ public class ControladorMC implements Runnable, ServicioMC, ServicioAsignarPunto
             String line = buffer.readLine();
             int idTest = 1;
             while (line != null && !line.isEmpty()) {
-                String nums[] = line.split("-");
+                String[] nums = line.split("-");
                 long puntosTotales = Long.parseLong(nums[0]);
                 int seed = Integer.parseInt(nums[1]);
                 Test test = new Test(idTest, seed, puntosTotales, BATCH_PUNTOS);
@@ -117,9 +124,8 @@ public class ControladorMC implements Runnable, ServicioMC, ServicioAsignarPunto
             }
             entrada.close();
 
-        } catch (IOException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

@@ -1,12 +1,8 @@
 import servicios.*;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.Random;
 
-public class ProcesadorPuntos implements Runnable{
+public class ProcesadorPuntos implements Runnable, ServicioIniciar {
 
     @Reference
     private ServicioAsignarPuntos servicioAsignarPuntos;
@@ -23,43 +19,44 @@ public class ProcesadorPuntos implements Runnable{
     long[] parametros;
 
     public void run() {
-        System.out.println("Run");
+        System.out.println("Procesador Running");
         try {
-            parametros = servicioAsignarPuntos.asignarPuntos();
-            while (true) {
-                if (parametros[0] != 0) {
-                    servicioSumarNodo.sumarNodo();
-                    calcularPuntosAdentro();
-
-                }
-            }
+            servicioSumarNodo.sumarNodo();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public void calcularPuntosAdentro() {
+        while (parametros[0] > 0) {
+            while (parametros[0] > 0) {
+                long puntosTotal = parametros[0];
+                long puntosAdentro = 0;
+                int seed = (int) parametros[1];
+                Random rng = new Random(seed);
 
-        if (parametros[0] == 0) {
-            servicioRestarNodo.restarNodo();
-        }else{
-            long puntosTotal = parametros[0];
-            long puntosAdentro = 0;
-            int seed = (int) parametros[1];
-            Random rng = new Random(seed);
-
-            for (long i = 0; i < puntosTotal; i++) {
-                float currentX = rng.nextFloat();
-                float currentY = rng.nextFloat();
-                float position = (currentX * currentX) + (currentY * currentY);
-                if (position <= 1) {
-                    puntosAdentro += 1;
+                for (long i = 0; i < puntosTotal; i++) {
+                    float currentX = rng.nextFloat();
+                    float currentY = rng.nextFloat();
+                    float position = (currentX * currentX) + (currentY * currentY);
+                    if (position <= 1) {
+                        puntosAdentro += 1;
+                    }
                 }
+                servicioRespuesta.respuesta(puntosAdentro);
+                parametros = servicioAsignarPuntos.asignarPuntos();
             }
-            servicioRespuesta.respuesta(puntosAdentro);
+            parametros = servicioAsignarPuntos.asignarPuntos();
+//        if (parametros[0] > 0 ) {
+//            calcularPuntosAdentro();
+//        }
         }
     }
 
-
-
+    @Override
+    public void iniciar() {
+        parametros = servicioAsignarPuntos.asignarPuntos();
+        calcularPuntosAdentro();
+        servicioRestarNodo.restarNodo();
+    }
 }

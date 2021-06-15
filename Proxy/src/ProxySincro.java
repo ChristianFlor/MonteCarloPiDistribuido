@@ -2,7 +2,7 @@ import servicios.*;
 
 import java.util.concurrent.Semaphore;
 
-public class ProxySincro implements ServicioAsignarPuntos,ServicioRespuesta,ServicioRestarNodo,ServicioSumarNodo{
+public class ProxySincro implements Runnable, ServicioAsignarPuntos,ServicioRespuesta,ServicioRestarNodo,ServicioSumarNodo{
 
     private static final Semaphore sem = new Semaphore(1);
 
@@ -18,9 +18,17 @@ public class ProxySincro implements ServicioAsignarPuntos,ServicioRespuesta,Serv
     @Reference
     private ServicioSumarNodo servicioSumarNodo;
 
+    @Reference
+    private ServicioIniciar servicioIniciar;
+
     @Override
-    public long asignarPuntos(){
-        long puntos = 0;
+    public void run() {
+        System.out.println("Proxy Running");
+    }
+
+    @Override
+    public long[] asignarPuntos(){
+        long[] puntos = {0,0};
         try{
             sem.acquire();
             puntos = servicioAsignarPuntos.asignarPuntos();

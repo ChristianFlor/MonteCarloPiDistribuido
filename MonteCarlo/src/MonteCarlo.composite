@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<composite xmlns="http://www.osoa.org/xmlns/sca/1.0"
+           xmlns:frascati="http://frascati.ow2.org/xmlns/sca/1.1" targetNamespace="http://frascati.ow2.org/mqcafe"
+           name="montecarlo">
+
+    <component name="c">
+        <implementation.java class="controladorMC.ControladorMC"/>
+
+        <service name="r">
+            <interface.java interface="java.lang.Runnable"/>
+        </service>
+
+        <service name="servicioMC">
+            <interface.java interface="servicios.ServicioMC"/>
+        </service>
+
+        <service name="servicioAsignarPuntos">
+            <interface.java interface="servicios.ServicioAsignarPuntos"/>
+        </service>
+
+        <service name="servicioRespuesta">
+            <interface.java interface="servicios.ServicioRespuesta"/>
+        </service>
+
+        <service name="servicioRestarNodo">
+            <interface.java interface="servicios.ServicioRestarNodo"/>
+        </service>
+
+        <service name="servicioSumarNodo">
+            <interface.java interface="servicios.ServicioSumarNodo"/>
+        </service>
+
+        <reference name="servicioIniciar">
+            <interface.java interface="servicios.ServicioIniciar"/>
+        </reference>
+    </component>
+
+    <service name="r" promote="c/r">
+        <interface.java interface="java.lang.Runnable"/>
+    </service>
+
+    <service name="servicioMC" promote="c/servicioMC">
+        <interface.java interface="servicios.ServicioMC"/>
+        <frascati:binding.rmi host="localhost" serviceName="rmiService1" port="1090"/>
+    </service>
+
+    <service name="servicioAsignarPuntos" promote="c/servicioAsignarPuntos">
+        <interface.java interface="servicios.ServicioAsignarPuntos"/>
+        <frascati:binding.rmi host="localhost" serviceName="rmiService1" port="1091"/>
+    </service>
+
+    <service name="servicioRespuesta" promote="c/servicioRespuesta">
+        <interface.java interface="servicios.ServicioRespuesta"/>
+        <frascati:binding.rmi host="localhost" serviceName="rmiService1" port="1092"/>
+    </service>
+
+    <service name="servicioMC" promote="c/servicioMC">
+        <interface.java interface="servicios.ServicioMC"/>
+        <frascati:binding.rmi host="localhost" serviceName="rmiService1" port="1093"/>
+    </service>
+
+    <service name="servicioMC" promote="c/servicioMC">
+        <interface.java interface="servicios.ServicioMC"/>
+        <frascati:binding.rmi host="localhost" serviceName="rmiService1" port="1094"/>
+    </service>
+
+    <reference name="servicioComMQCafe" promote="c/servicioComMQCafe">
+        <frascati:binding.rmi host="localhost"
+                              serviceName="rmiService4" port="1095" />
+    </reference>
+</composite>

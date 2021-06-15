@@ -10,6 +10,7 @@ public class Test implements Serializable {
 
     private long remainingPoints;
     private long pointsInside = 0;
+
     private int connectedNodes = 0;
 
     private long timeBeforeTest;
