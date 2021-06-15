@@ -7,6 +7,4 @@ public interface ServicioMC {
 
     public double calcularPi(int seed, long points);
 
-    //public void generarPuntos();
-
 }

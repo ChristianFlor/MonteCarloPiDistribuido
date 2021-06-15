@@ -10,6 +10,8 @@ public class Interfaz extends JPanel {
 
     private JLabel lblSeed, lblPoints, lblPi;
     private JTable tabla;
+    private JButton btnTests, btnNewInput;
+    private JTextArea textAreaSeed, textAreaPoints; 
 
     public JTable getTabla() {
         return tabla;
@@ -30,6 +32,29 @@ public class Interfaz extends JPanel {
         // necesario
         JScrollPane panel = new JScrollPane(tabla);
         add(panel, BorderLayout.CENTER);
+
+
+        // Agregar nuevos botones
+
+        // Boton para correr pruebas
+        btnTests = new JButton("Usar Tests");
+		btnTests.setBounds(10, 36, 118, 23);
+		panel.add(btnTests);
+        // Boton para usar datos ingresados por el usuario
+        btnNewInput = new JButton("Usar Nuevos datos");
+		btnNewInput.setBounds(10, 50, 118, 23);
+		panel.add(btnNewInput);
+
+        textAreaSeed = new JTextArea("0");
+		textAreaSeed.setEditable(true);
+		textAreaSeed.setBounds(138, 100, 245, 24);
+		panel.add(textAreaSeed);
+        
+        textAreaPoints = new JTextArea("0");
+		textAreaPoints.setEditable(true);
+		textAreaPoints.setBounds(138, 35, 245, 24);
+		panel.add(textAreaPoints);
+
     }
 
     // El Modelo de la Tabla es el que controla todos los
@@ -75,6 +100,23 @@ public class Interfaz extends JPanel {
     public void setInfo(String seed, String points, String pi) {
 
     }
+
+    public JButton getBtnTests() {
+		return btnTests;
+	}
+
+    public JButton getBtnNewInput() {
+		return btnNewInput;
+	}
+
+    public JTextArea getTextAreaSeed(){
+        return textAreaSeed;
+    } 
+
+    public JTextArea getTextAreaPoints()){
+        return textAreaPoints;
+    } 
+
 }
 
 //--------------------------------------------------------------

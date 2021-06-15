@@ -18,41 +18,26 @@ import interfazUsuario.Interfaz;
 
 
 @Scope("COMPOSITE")
-public class ControladorMC implements Runnable, ServicioMC {
+public class ControladorMC implements Runnable, ServicioMC, ServicioAsignarPuntos, ServicioRestarNodo, ServicioSumarNodo, ServicioRespuesta{
 
-   /* @Reference
-	private ServicioMC servicioMC;*/
-
-    //@Reference
     private TestRepositorio test = TestRepositorio.getInstance();
-    //@Reference
     private OutputRepositorio output = OutputRepositorio.getInstance();
 
-    private List<Test> tests = new ArrayList<Test>();
-
+    private Queue<Test> tests = new LinkedList<Test>();
+    private Test currentTest;
     private Interfaz frame;
-    private int codMaquina;
-    private double suma;
+
 
     private final static String COMA = ",";
     private final static long BATCH_PUNTOS = 100000;
-    private static long puntosRestantes;
 
-    public void asignarPuntos(){
+    private int seed;
+    private int nodosConectados = 0;
+    private long puntosTotales;
 
-    }
+    private long puntosRestantes;
+    private long puntosAdentro = 0;
 
-    public void sumarNodo(){
-
-    }
-
-    public void restarNodo(){
-
-    }
-
-    public void respuesta(){
-
-    }
 
     public void run() {
         System.out.println("Run");
@@ -66,31 +51,51 @@ public class ControladorMC implements Runnable, ServicioMC {
             frame.getContentPane().add(new Interfaz(), BorderLayout.CENTER);
             frame.setSize(800, 600);
             frame.setVisible(true);
-//			frame = new Interfaz();
-//			frame.setLocationRelativeTo(null);
-//			frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-//			frame.setVisible(true);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        lecturaPruebas();
-        initializeModel();
     }
 
+    // @Override
+    // public double calcularPi(int seed, long points) {
+    //     CalculadorPi calculador = new CalculadorPi(seed, points);
+    //     long puntosAdentro = calculador.calcularPuntosAdentro();
+    //     double pi = (puntosAdentro << 2) / points;
+    //     return pi;
+    // }
 
-    @Override
-    public double calcularPi(int seed, long points) {
-        CalculadorPi calculador = new CalculadorPi(seed, points);
-        long puntosAdentro = calculador.calcularPuntosAdentro();
-        double pi = (puntosAdentro << 2) / points;
+    private double retornarResultado(){
+        double pi = (puntosAdentro << 2) / puntosTotales;
         return pi;
     }
-/*
 
-	@Override
-    public void generarPuntos(){
+    
+    @Override
+    public long asignarPuntos(){
+        long trabajo = 0
+        if(puntosRestantes > 0){
+            trabajo = BATCH_PUNTOS;
+        }else{
+            retornarResultado();
+        }
+        return trabajo;
+    }
+    
+    @Override
+    public void restarNodo(){
+        nodosConectados--;
+    }
 
-	}**/
+    @Override
+    public void sumarNodo(){
+        nodosConectados++;
+    }
+
+    @Override
+    public void respuesta(long puntosAdentro){
+        this.puntosAdentro += puntosAdentro;
+        puntosRestantes -= BATCH_PUNTOS;
+    }
 
 
     private void lecturaPruebas() {
@@ -105,9 +110,9 @@ public class ControladorMC implements Runnable, ServicioMC {
             String line = buffer.readLine();
             while (line != null && !line.isEmpty()) {
                 String nums[] = line.split("-");
-                long points = Long.parseLong(nums[0]);
-                int seed = Integer.parseInt(nums[1]);
-                puntosRestantes = points;
+                puntosTotales = Long.parseLong(nums[0]);
+                seed = Integer.parseInt(nums[1]);
+                puntosRestantes = puntosTotales;
                 Test test = new Test(nums[1], seed, points);
                 tests.add(test);
                 line = buffer.readLine();
@@ -144,22 +149,27 @@ public class ControladorMC implements Runnable, ServicioMC {
         System.out.println("Finish");
     }
 
-    public void initializeModel() {
+    public void setupTest() {
 
         String encabezado = "Valor Pi" + COMA + "Tiempo de Ejecucion\n";
         String output = "";
-        for (int i = 0; i < tests.size(); i++) {
-            int filasPorTest = 15;
-            int filaComienzoTestActual = filasPorTest * i + 1;
-            output += "Test " + (i + 1) + "\n" + encabezado;
-            long totalPuntos = tests.get(i).getPoints();
-            int seed = tests.get(i).getSeed();
-            frame.getTabla().setValueAt(("Test: " + (i + 1) + "-").split("-"), filaComienzoTestActual, 0);
-            frame.getTabla().setValueAt(("Semilla: " + seed + "-Num Puntos: " + totalPuntos).split("-"), filaComienzoTestActual + 1, 0);
+        currentTest = tests.poll();
+        if (currentTest != null){
+            puntosTotales = currentTest.get(i).getPoints();
+            seed = currentTest.get(i).getSeed();
+        }
+        // for (int i = 0; i < tests.size(); i++) {
+        //     int filasPorTest = 15;
+        //     int filaComienzoTestActual = filasPorTest * i + 1;
+        //     output += "Test " + (i + 1) + "\n" + encabezado;
+            // long totalPuntos = tests.get(i).getPoints();
+            // int seed = tests.get(i).getSeed();
+            // frame.getTabla().setValueAt(("Test: " + (i + 1) + "-").split("-"), filaComienzoTestActual, 0);
+            // frame.getTabla().setValueAt(("Semilla: " + seed + "-Num Puntos: " + totalPuntos).split("-"), filaComienzoTestActual + 1, 0);
             long average = 0;
             for (int j = 0; j < 10; j++) {
                 long timeNow = System.currentTimeMillis();
-                double pi = calcularPi(seed, totalPuntos);
+                // double pi = calcularPi(seed, totalPuntos);
                 long timeAfter = System.currentTimeMillis();
                 long totalTime = timeAfter - timeNow;
 
@@ -178,5 +188,23 @@ public class ControladorMC implements Runnable, ServicioMC {
     public void showValues() {
 
     }
+
+    public void eventos(){
+
+        frame.getBtnTest().addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+                lecturaPruebas();
+                initializeModel();
+			}
+		});
+
+        frame.getBtnNewInput().addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+                puntosTotales = Long.parseLong(frame.getTextAreaPoints().getText());
+                seed = Integer.parseInt(frame.getTextAreaSeed().getText());
+			}
+		});
+    }
+
 
 }
