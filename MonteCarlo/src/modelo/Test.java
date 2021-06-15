@@ -4,40 +4,56 @@ import java.io.Serializable;
 
 public class Test implements Serializable {
 
-    private String id;
     private int seed;
     private long points;
 
+    private long remainingPoints;
+    private long pointsInside = 0;
+    private long batchSize;
 
-    public Test(String id, int seed, long points) {
+    private int connectedNodes = 0;
+
+    public Test(int seed, long points, long batchSize) {
         super();
-        this.id = id;
         this.seed = seed;
         this.points = points;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+        this.remainingPoints = points;
+        this.batchSize = batchSize;
     }
 
     public int getSeed() {
         return seed;
     }
 
-    public void setSeed(int seed) {
-        this.seed = seed;
-    }
-
     public long getPoints() {
         return points;
     }
 
-    public void setPoints(long points) {
-        this.points = points;
+    public long getRemainingPoints() {
+        return remainingPoints;
     }
 
+    public void reduceRemainingPoints() {
+        this.remainingPoints -= batchSize;
+    }
+
+    public long getPointsInside() {
+        return pointsInside;
+    }
+
+    public void setPointsInside(long pointsInside) {
+        this.pointsInside = pointsInside;
+    }
+
+    public int getConnectedNodes() {
+        return connectedNodes;
+    }
+
+    public void addConnectedNodes() {
+        connectedNodes++;
+    }
+
+    public void reduceConnectedNodes() {
+        connectedNodes--;
+    }
 }

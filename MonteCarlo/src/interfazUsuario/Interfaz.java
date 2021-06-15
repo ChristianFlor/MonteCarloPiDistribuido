@@ -113,7 +113,7 @@ public class Interfaz extends JPanel {
         return textAreaSeed;
     } 
 
-    public JTextArea getTextAreaPoints()){
+    public JTextArea getTextAreaPoints(){
         return textAreaPoints;
     } 
 

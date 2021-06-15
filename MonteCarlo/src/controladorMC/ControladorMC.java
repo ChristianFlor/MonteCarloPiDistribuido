@@ -20,24 +20,20 @@ import interfazUsuario.Interfaz;
 @Scope("COMPOSITE")
 public class ControladorMC implements Runnable, ServicioMC, ServicioAsignarPuntos, ServicioRestarNodo, ServicioSumarNodo, ServicioRespuesta{
 
-    private TestRepositorio test = TestRepositorio.getInstance();
-    private OutputRepositorio output = OutputRepositorio.getInstance();
-
-    private Queue<Test> tests = new LinkedList<Test>();
-    private Test currentTest;
-    private Interfaz frame;
-
-
     private final static String COMA = ",";
     private final static long BATCH_PUNTOS = 100000;
 
-    private int seed;
-    private int nodosConectados = 0;
-    private long puntosTotales;
+    private Interfaz frame;
 
-    private long puntosRestantes;
-    private long puntosAdentro = 0;
+    private Queue<Test> tests = new LinkedList<>();
 
+    private Test currentTest;
+
+    private Resultado resultado;
+
+    private boolean openToRequests = false;
+    long timeBeforeTest = System.currentTimeMillis();
+    long timeAfterTest= System.currentTimeMillis();
 
     public void run() {
         System.out.println("Run");
@@ -55,40 +51,27 @@ public class ControladorMC implements Runnable, ServicioMC, ServicioAsignarPunto
             e.printStackTrace();
         }
     }
-
-    // @Override
-    // public double calcularPi(int seed, long points) {
-    //     CalculadorPi calculador = new CalculadorPi(seed, points);
-    //     long puntosAdentro = calculador.calcularPuntosAdentro();
-    //     double pi = (puntosAdentro << 2) / points;
-    //     return pi;
-    // }
-
-    private double retornarResultado(){
-        double pi = (puntosAdentro << 2) / puntosTotales;
-        return pi;
-    }
-
     
     @Override
     public long asignarPuntos(){
-        long trabajo = 0
-        if(puntosRestantes > 0){
+        long trabajo = 0;
+        if(currentTest.getRemainingPoints() > 0){
             trabajo = BATCH_PUNTOS;
         }else{
-            retornarResultado();
+            escribirResultados();
+            timeAfterTest = System.currentTimeMillis();
         }
         return trabajo;
     }
     
     @Override
     public void restarNodo(){
-        nodosConectados--;
+        currentTest.reduceConnectedNodes();
     }
 
     @Override
     public void sumarNodo(){
-        nodosConectados++;
+        currentTest.addConnectedNodes();
     }
 
     @Override
@@ -97,6 +80,18 @@ public class ControladorMC implements Runnable, ServicioMC, ServicioAsignarPunto
         puntosRestantes -= BATCH_PUNTOS;
     }
 
+    public void setupTest() {
+        currentTest = tests.poll();
+        if (currentTest != null){
+            puntosTotales = currentTest.getPoints();
+            puntosRestantes = puntosTotales;
+            seed = currentTest.getSeed();
+            openToRequests = true;
+            currentTest.concatOutput(encabezado);
+        }else{
+            openToRequests = false;
+        }
+    }
 
     private void lecturaPruebas() {
         System.out.println(System.getProperty("user.dir"));
@@ -113,7 +108,7 @@ public class ControladorMC implements Runnable, ServicioMC, ServicioAsignarPunto
                 puntosTotales = Long.parseLong(nums[0]);
                 seed = Integer.parseInt(nums[1]);
                 puntosRestantes = puntosTotales;
-                Test test = new Test(nums[1], seed, points);
+                Test test = new Test(nums[1], seed, puntosTotales, BATCH_PUNTOS);
                 tests.add(test);
                 line = buffer.readLine();
             }
@@ -124,15 +119,33 @@ public class ControladorMC implements Runnable, ServicioMC, ServicioAsignarPunto
             e1.printStackTrace();
         }
     }
+    private void escribirResultado(){
+        for (int j = 0; j < 10; j++) {
+            long timeNow = System.currentTimeMillis();
+            double pi = calcularPi(seed, totalPuntos);
+            long timeAfter = System.currentTimeMillis();
+            long totalTime = timeAfter - timeNow;
 
-    public void escribirResultados(String output) {
+            average += totalTime;
+            output += pi + COMA + totalTime + "\n";
+            frame.getTabla().setValueAt(("Pi: " + pi + "-Tiempo Ejec (ms): " + totalTime).split("-"), filaComienzoTestActual + 2 + j, 0);
+        }
+        average = average / 10;
+        output += "Promedio" + COMA + average + "\n";
+        output += "Nodos" + COMA + "1\n\n";
+        frame.getTabla().setValueAt(("Tiempo promedio (ms): " + average + "-Nodos: 1").split("-"), filaComienzoTestActual + 12, 0);
+        escribirResultados(output);
+
+        double pi = (puntosAdentro << 2) / puntosTotales;
+    }
+    public void escribirResultados() {
         System.out.println("Escribiendo");
         FileWriter fichero = null;
-        PrintWriter pw = null;
+        PrintWriter pw;
         try {
             fichero = new FileWriter("MonteCarlo_Pi/data/resultados.csv");
             pw = new PrintWriter(fichero);
-            pw.println(output);
+            pw.println(currentTest.getOutput());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -149,52 +162,12 @@ public class ControladorMC implements Runnable, ServicioMC, ServicioAsignarPunto
         System.out.println("Finish");
     }
 
-    public void setupTest() {
-
-        String encabezado = "Valor Pi" + COMA + "Tiempo de Ejecucion\n";
-        String output = "";
-        currentTest = tests.poll();
-        if (currentTest != null){
-            puntosTotales = currentTest.get(i).getPoints();
-            seed = currentTest.get(i).getSeed();
-        }
-        // for (int i = 0; i < tests.size(); i++) {
-        //     int filasPorTest = 15;
-        //     int filaComienzoTestActual = filasPorTest * i + 1;
-        //     output += "Test " + (i + 1) + "\n" + encabezado;
-            // long totalPuntos = tests.get(i).getPoints();
-            // int seed = tests.get(i).getSeed();
-            // frame.getTabla().setValueAt(("Test: " + (i + 1) + "-").split("-"), filaComienzoTestActual, 0);
-            // frame.getTabla().setValueAt(("Semilla: " + seed + "-Num Puntos: " + totalPuntos).split("-"), filaComienzoTestActual + 1, 0);
-            long average = 0;
-            for (int j = 0; j < 10; j++) {
-                long timeNow = System.currentTimeMillis();
-                // double pi = calcularPi(seed, totalPuntos);
-                long timeAfter = System.currentTimeMillis();
-                long totalTime = timeAfter - timeNow;
-
-                average += totalTime;
-                output += pi + COMA + totalTime + "\n";
-                frame.getTabla().setValueAt(("Pi: " + pi + "-Tiempo Ejec (ms): " + totalTime).split("-"), filaComienzoTestActual + 2 + j, 0);
-            }
-            average = average / 10;
-            output += "Promedio" + COMA + average + "\n";
-            output += "Nodos" + COMA + "1\n\n";
-            frame.getTabla().setValueAt(("Tiempo promedio (ms): " + average + "-Nodos: 1").split("-"), filaComienzoTestActual + 12, 0);
-        }
-        escribirResultados(output);
-    }
-
-    public void showValues() {
-
-    }
-
     public void eventos(){
 
-        frame.getBtnTest().addActionListener(new ActionListener() {
+        frame.getBtnTests().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
                 lecturaPruebas();
-                initializeModel();
+                setupTest();
 			}
 		});
 
@@ -205,6 +178,4 @@ public class ControladorMC implements Runnable, ServicioMC, ServicioAsignarPunto
 			}
 		});
     }
-
-
 }
