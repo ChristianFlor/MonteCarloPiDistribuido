@@ -4,23 +4,47 @@
            name="montecarlo">
 
     <component name="c">
-        <implementation.java class="controladorMC.ControladorMC"/>
+        <implementation.java class="procesadorPuntos.ProcesadorPuntos"/>
 
         <service name="r">
             <interface.java interface="java.lang.Runnable"/>
         </service>
 
-        <service name="servicioMC">
-            <interface.java interface="servicios.ServicioMC"/>
-        </service>
+        <reference name="servicioAsignarPuntos">
+            <interface.java interface="servicios.ServicioAsignarPuntos"/>
+        </reference>
+
+        <reference name="servicioRespuesta">
+            <interface.java interface="servicios.ServicioRespuesta"/>
+        </reference>
+
+        <reference name="servicioRestarNodo">
+            <interface.java interface="servicios.ServicioRestarNodo"/>
+        </reference>
+
+        <reference name="servicioSumarNodo">
+            <interface.java interface="servicios.ServicioSumarNodo"/>
+        </reference>
     </component>
 
     <service name="r" promote="c/r">
         <interface.java interface="java.lang.Runnable"></interface.java>
     </service>
 
-    <service name="servicioMC" promote="c/servicioMC">
-        <interface.java interface="servicios.ServicioMC"></interface.java>
-        <frascati:binding.rmi host="localhost" serviceName="rmiService1" port="1090"/>
-    </service>
+    <reference name="servicioAsignarPuntos" promote="c/servicioAsignarPuntos">
+        <frascati:binding.rmi host="localhost" serviceName="rmiService12" port="1091" />
+    </reference>
+
+    <reference name="servicioRespuesta" promote="c/servicioRespuesta">
+        <frascati:binding.rmi host="localhost" serviceName="rmiService13" port="1092" />
+    </reference>
+
+    <reference name="servicioSumarNodo" promote="c/servicioSumarNodo">
+        <frascati:binding.rmi host="localhost" serviceName="rmiService14" port="1093" />
+    </reference>
+
+    <reference name="servicioRestarNodo" promote="c/servicioRestarNodo">
+        <frascati:binding.rmi host="localhost" serviceName="rmiService15" port="1094" />
+    </reference>
+
 </composite>

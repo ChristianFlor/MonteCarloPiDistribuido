@@ -29,10 +29,6 @@
         <service name="servicioSumarNodo">
             <interface.java interface="servicios.ServicioSumarNodo"/>
         </service>
-
-        <reference name="servicioIniciar">
-            <interface.java interface="servicios.ServicioIniciar"/>
-        </reference>
     </component>
 
     <service name="r" promote="c/r">
@@ -46,26 +42,21 @@
 
     <service name="servicioAsignarPuntos" promote="c/servicioAsignarPuntos">
         <interface.java interface="servicios.ServicioAsignarPuntos"/>
-        <frascati:binding.rmi host="localhost" serviceName="rmiService1" port="1091"/>
+        <frascati:binding.rmi host="localhost" serviceName="rmiService2" port="1081"/>
     </service>
 
     <service name="servicioRespuesta" promote="c/servicioRespuesta">
         <interface.java interface="servicios.ServicioRespuesta"/>
-        <frascati:binding.rmi host="localhost" serviceName="rmiService1" port="1092"/>
+        <frascati:binding.rmi host="localhost" serviceName="rmiService3" port="1082"/>
     </service>
 
-    <service name="servicioMC" promote="c/servicioMC">
-        <interface.java interface="servicios.ServicioMC"/>
-        <frascati:binding.rmi host="localhost" serviceName="rmiService1" port="1093"/>
+    <service name="servicioSumarNodo" promote="c/servicioSumarNodo">
+        <interface.java interface="servicios.ServicioSumarNodo"/>
+        <frascati:binding.rmi host="localhost" serviceName="rmiService4" port="1083"/>
     </service>
 
-    <service name="servicioMC" promote="c/servicioMC">
-        <interface.java interface="servicios.ServicioMC"/>
-        <frascati:binding.rmi host="localhost" serviceName="rmiService1" port="1094"/>
+    <service name="servicioRestarNodo" promote="c/servicioRestarNodo">
+        <interface.java interface="servicios.servicioRestarNodo"/>
+        <frascati:binding.rmi host="localhost" serviceName="rmiService5" port="1084"/>
     </service>
-
-    <reference name="servicioComMQCafe" promote="c/servicioComMQCafe">
-        <frascati:binding.rmi host="localhost"
-                              serviceName="rmiService4" port="1095" />
-    </reference>
 </composite>

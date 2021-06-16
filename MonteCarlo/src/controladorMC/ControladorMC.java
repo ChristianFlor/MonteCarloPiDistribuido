@@ -20,9 +20,6 @@ import interfazUsuario.Interfaz;
 @Scope("COMPOSITE")
 public class ControladorMC implements Runnable, ServicioMC, ServicioAsignarPuntos, ServicioRestarNodo, ServicioSumarNodo, ServicioRespuesta, ServicioIniciar {
 
-    @Reference
-    private ServicioIniciar servicioIniciar;
-
     private final static long BATCH_PUNTOS = 100000;
     private final static int PRUEBAS_POR_TEST = 10;
     private final static int NODOS_POR_TEST = 4;
@@ -91,6 +88,7 @@ public class ControladorMC implements Runnable, ServicioMC, ServicioAsignarPunto
 
     @Override
     public void sumarNodo() {
+        /// Modificar
         currentTest.addConnectedNodes();
         if (currentTest.getConnectedNodes() == NODOS_POR_TEST) {
             servicioIniciar.iniciar();

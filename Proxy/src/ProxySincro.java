@@ -18,9 +18,6 @@ public class ProxySincro implements Runnable, ServicioAsignarPuntos,ServicioResp
     @Reference
     private ServicioSumarNodo servicioSumarNodo;
 
-    @Reference
-    private ServicioIniciar servicioIniciar;
-
     @Override
     public void run() {
         System.out.println("Proxy Running");
