@@ -10,7 +10,7 @@ public class Interfaz extends JFrame {
     private JTextArea textAreaSeed, textAreaPoints, textAreaNodes;
     private JFrame frame;
     private JPanel panel;
-    private JLabel lblPiFinal;
+    private JLabel lblPiFinal, lblNodesNum;
 
     /**
      * Create the frame
@@ -49,6 +49,11 @@ public class Interfaz extends JFrame {
         vBox.add(lblPi);
         vBox.add(lblPiFinal);
 
+        JLabel lblNodes = new JLabel("Nodos conectados:");
+        lblNodesNum = new JLabel();
+        vBox.add(lblNodes);
+        vBox.add(lblNodesNum);
+
         panel.add(vBox, BoxLayout.X_AXIS);
 
         frame.setSize(400, 200);
@@ -77,6 +82,10 @@ public class Interfaz extends JFrame {
     }
 
     public JLabel getLblPiFinal() {
+        return lblPiFinal;
+    }
+
+    public JLabel getLblNodesNum() {
         return lblPiFinal;
     }
 

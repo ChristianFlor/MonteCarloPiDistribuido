@@ -146,6 +146,7 @@ public class ControladorMC implements Runnable, ServicioAsignarPuntos, ServicioR
     public void sumarNodo() {
         connectedNodes++;
         System.out.println("Nodos Conectados: " + connectedNodes);
+        frame.getLblNodesNum().setText(String.valueOf(connectedNodes));
         if (connectedNodes == nodosPorTest) {
             System.out.println("\nProcesando...");
             setupTest();
