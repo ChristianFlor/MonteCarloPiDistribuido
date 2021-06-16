@@ -1,8 +1,11 @@
+package proxy;
+
 import servicios.*;
+import org.osoa.sca.annotations.*;
 
 import java.util.concurrent.Semaphore;
 
-public class ProxySincro implements Runnable, ServicioAsignarPuntos,ServicioRespuesta,ServicioRestarNodo,ServicioSumarNodo{
+public class ProxySincro implements Runnable, ServicioAsignarPuntos, ServicioRespuesta, ServicioRestarNodo, ServicioSumarNodo {
 
     private static final Semaphore sem = new Semaphore(1);
 
@@ -24,47 +27,47 @@ public class ProxySincro implements Runnable, ServicioAsignarPuntos,ServicioResp
     }
 
     @Override
-    public long[] asignarPuntos(){
-        long[] puntos = {0,0};
-        try{
+    public long[] asignarPuntos() {
+        long[] puntos = {0, 0};
+        try {
             sem.acquire();
             puntos = servicioAsignarPuntos.asignarPuntos();
             sem.release();
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return puntos;
     }
 
     @Override
-    public void sumarNodo(){
-        try{
+    public void sumarNodo() {
+        try {
             sem.acquire();
             servicioSumarNodo.sumarNodo();
             sem.release();
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void restarNodo(){
-        try{
+    public void restarNodo() {
+        try {
             sem.acquire();
             servicioRestarNodo.restarNodo();
             sem.release();
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void respuesta(long puntosAdentro){
-        try{
+    public void respuesta(long puntosAdentro) {
+        try {
             sem.acquire();
             servicioRespuesta.respuesta(puntosAdentro);
             sem.release();
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

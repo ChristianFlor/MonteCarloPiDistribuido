@@ -4,25 +4,25 @@
            name="montecarlo">
 
     <component name="c">
-        <implementation.java class="controladorMC.ControladorMC"/>
+        <implementation.java class="proxy.ProxySincro"/>
 
         <service name="r">
             <interface.java interface="java.lang.Runnable"/>
         </service>
 
-        <service name="servicioAsignarPuntos">
+        <service name="servicioAsignarPuntosProxy">
             <interface.java interface="servicios.ServicioAsignarPuntos"/>
         </service>
 
-        <service name="servicioRespuesta">
+        <service name="servicioRespuestaProxy">
             <interface.java interface="servicios.ServicioRespuesta"/>
         </service>
 
-        <service name="servicioRestarNodo">
+        <service name="servicioRestarNodoProxy">
             <interface.java interface="servicios.ServicioRestarNodo"/>
         </service>
 
-        <service name="servicioSumarNodo">
+        <service name="servicioSumarNodoProxy">
             <interface.java interface="servicios.ServicioSumarNodo"/>
         </service>
 
@@ -46,26 +46,26 @@
     </component>
 
     <service name="r" promote="c/r">
-        <interface.java interface="java.lang.Runnable"></interface.java>
+        <interface.java interface="java.lang.Runnable"/>
     </service>
 
     
-    <service name="servicioAsignarPuntos" promote="c/servicioAsignarPuntos">
+    <service name="servicioAsignarPuntosProxy" promote="c/servicioAsignarPuntosProxy">
         <interface.java interface="servicios.ServicioAsignarPuntos"/>
         <frascati:binding.rmi host="localhost" serviceName="rmiService12" port="1091"/>
     </service>
 
-    <service name="servicioRespuesta" promote="c/servicioRespuesta">
+    <service name="servicioRespuestaProxy" promote="c/servicioRespuestaProxy">
         <interface.java interface="servicios.ServicioRespuesta"/>
         <frascati:binding.rmi host="localhost" serviceName="rmiService13" port="1092"/>
     </service>
 
-    <service name="servicioSumarNodo" promote="c/servicioSumarNodo">
+    <service name="servicioSumarNodoProxy" promote="c/servicioSumarNodoProxy">
         <interface.java interface="servicios.ServicioSumarNodo"/>
         <frascati:binding.rmi host="localhost" serviceName="rmiService14" port="1093"/>
     </service>
 
-    <service name="servicioRestarNodo" promote="c/servicioRestarNodo">
+    <service name="servicioRestarNodoProxy" promote="c/servicioRestarNodoProxy">
         <interface.java interface="servicios.ServicioRestarNodo"/>
         <frascati:binding.rmi host="localhost" serviceName="rmiService15" port="1094"/>
     </service>

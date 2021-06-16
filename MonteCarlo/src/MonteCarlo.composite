@@ -10,9 +10,9 @@
             <interface.java interface="java.lang.Runnable"/>
         </service>
 
-        <service name="servicioMC">
-            <interface.java interface="servicios.ServicioMC"/>
-        </service>
+<!--        <service name="servicioMC">-->
+<!--            <interface.java interface="servicios.ServicioMC"/>-->
+<!--        </service>-->
 
         <service name="servicioAsignarPuntos">
             <interface.java interface="servicios.ServicioAsignarPuntos"/>
@@ -35,10 +35,10 @@
         <interface.java interface="java.lang.Runnable"/>
     </service>
 
-    <service name="servicioMC" promote="c/servicioMC">
-        <interface.java interface="servicios.ServicioMC"/>
-        <frascati:binding.rmi host="localhost" serviceName="rmiService1" port="1090"/>
-    </service>
+<!--    <service name="servicioMC" promote="c/servicioMC">-->
+<!--        <interface.java interface="servicios.ServicioMC"/>-->
+<!--        <frascati:binding.rmi host="localhost" serviceName="rmiService1" port="1090"/>-->
+<!--    </service>-->
 
     <service name="servicioAsignarPuntos" promote="c/servicioAsignarPuntos">
         <interface.java interface="servicios.ServicioAsignarPuntos"/>
@@ -56,7 +56,7 @@
     </service>
 
     <service name="servicioRestarNodo" promote="c/servicioRestarNodo">
-        <interface.java interface="servicios.servicioRestarNodo"/>
+        <interface.java interface="servicios.ServicioRestarNodo"/>
         <frascati:binding.rmi host="localhost" serviceName="rmiService5" port="1084"/>
     </service>
 </composite>

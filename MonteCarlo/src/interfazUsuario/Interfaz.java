@@ -3,119 +3,70 @@ package interfazUsuario;
 import java.awt.*;
 
 import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
 
 public class Interfaz extends JFrame {
 
-
-    private JLabel lblSeed, lblPoints, lblPi;
-    private JTable tabla;
     private JButton btnTests, btnNewInput;
-    private JTextArea textAreaSeed, textAreaPoints; 
-
-    public JTable getTabla() {
-        return tabla;
-    }
+    private JTextArea textAreaSeed, textAreaPoints;
+    private JFrame frame;
+    private JPanel panel;
 
     /**
      * Create the frame
      */
     public Interfaz() {
-
-//		datos[0] = header;
-
         setLayout(new BorderLayout());
-        tabla = new JTable(new ModeloDatos());
-        // La tabla se añade a un ScrollPane para que sea éste el
-        // que controle automáticamente en tamaño de la tabla,
-        // presentando una barra de desplazamiento cuando sea
-        // necesario
-        JScrollPane panel = new JScrollPane(tabla);
-        add(panel, BorderLayout.CENTER);
-
-
-        // Agregar nuevos botones
+        frame = new JFrame();
+        panel = new JPanel();
+//        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+//        add(panel, BorderLayout.CENTER);
 
         // Boton para correr pruebas
+        Box vBox = Box.createVerticalBox();
+
         btnTests = new JButton("Usar Tests");
-		btnTests.setBounds(10, 36, 118, 23);
-		panel.add(btnTests);
         // Boton para usar datos ingresados por el usuario
         btnNewInput = new JButton("Usar Nuevos datos");
-		btnNewInput.setBounds(10, 50, 118, 23);
-		panel.add(btnNewInput);
+
+        vBox.add(btnTests);
+        vBox.add(btnNewInput);
 
         textAreaSeed = new JTextArea("0");
-		textAreaSeed.setEditable(true);
-		textAreaSeed.setBounds(138, 100, 245, 24);
-		panel.add(textAreaSeed);
-        
+        textAreaSeed.setEditable(true);
+        textAreaSeed.setBounds(138, 100, 245, 24);
+        vBox.add(textAreaSeed);
+
         textAreaPoints = new JTextArea("0");
-		textAreaPoints.setEditable(true);
-		textAreaPoints.setBounds(138, 35, 245, 24);
-		panel.add(textAreaPoints);
+        textAreaPoints.setEditable(true);
+        textAreaPoints.setBounds(138, 35, 245, 24);
+        vBox.add(textAreaPoints);
 
+        panel.add(vBox, BoxLayout.X_AXIS);
+
+        frame.setSize(400, 400);
+        frame.getContentPane().add(BorderLayout.CENTER, panel);
+        frame.setVisible(true);
     }
 
-    // El Modelo de la Tabla es el que controla todos los
-    // datos que se colocan en ella
-    class ModeloDatos extends AbstractTableModel {
-        String[][] datos;
-
-        public ModeloDatos() {
-            datos = new String[75][2];
-        }
-
-        // Devuelve el número de columnas de la tabla
-        public int getColumnCount() {
-            return (datos[0].length);
-        }
-
-        // Devuelve el número de filas de la tabla
-        public int getRowCount() {
-            return (datos.length);
-        }
-
-        // Indica si la casilla identificada por fila y columna es
-        // editable
-        public boolean isCellEditable(int fila, int col) {
-            return (false);
-        }
-
-        // Devuelve el valor de una determinada casilla de la tabla
-        // identificada mediante fila y columna
-        public String getValueAt(int fila, int col) {
-            return (datos[fila][col]);
-        }
-
-        // Cambia el valor que contiene una determinada casilla de
-        // la tabla
-        public void setValueAt(Object valor, int fila, int col) {
-            datos[fila] = (String[]) valor;
-            // Indica que se ha cambiado
-            fireTableDataChanged();
-        }
-    }
-
-    public void setInfo(String seed, String points, String pi) {
-
+    public JFrame getFrame() {
+        return frame;
     }
 
     public JButton getBtnTests() {
-		return btnTests;
-	}
+        return btnTests;
+    }
 
     public JButton getBtnNewInput() {
-		return btnNewInput;
-	}
+        return btnNewInput;
+    }
 
-    public JTextArea getTextAreaSeed(){
+    public JTextArea getTextAreaSeed() {
         return textAreaSeed;
-    } 
+    }
 
-    public JTextArea getTextAreaPoints(){
+    public JTextArea getTextAreaPoints() {
         return textAreaPoints;
-    } 
+    }
 
 }
 
