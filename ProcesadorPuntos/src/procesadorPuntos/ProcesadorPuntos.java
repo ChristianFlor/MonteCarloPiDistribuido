@@ -25,11 +25,11 @@ public class ProcesadorPuntos implements Runnable {
         try {
             servicioSumarNodo.sumarNodo();
             parametros = servicioAsignarPuntos.asignarPuntos();
-            System.out.println(parametros[0]);
             while (parametros[0] != -1) {
                 calcularPuntosAdentro();
                 parametros = servicioAsignarPuntos.asignarPuntos();
             }
+            System.out.println("Terminado!");
             servicioRestarNodo.restarNodo();
         } catch (Exception e) {
             e.printStackTrace();

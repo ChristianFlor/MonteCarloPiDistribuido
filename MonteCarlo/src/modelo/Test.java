@@ -4,18 +4,12 @@ import java.io.Serializable;
 
 public class Test implements Serializable {
 
-    private final int seed;
-    private final long points;
-    private final long batchSize;
+    private final int id, seed;
+    private final long points, batchSize;
 
-    private long remainingPoints;
-    private long pointsInside = 0;
+    private long remainingPoints,pointsInside, timeBeforeTest;
 
-    private int connectedNodes = 0;
-
-    private long timeBeforeTest;
-
-    private final int id;
+    private int iterations;
 
     public Test(int id, int seed, long points, long batchSize) {
         super();
@@ -24,6 +18,8 @@ public class Test implements Serializable {
         this.points = points;
         this.remainingPoints = points;
         this.batchSize = batchSize;
+        pointsInside = 0;
+        iterations = 0;
     }
 
     public int getId() {
@@ -42,8 +38,8 @@ public class Test implements Serializable {
         return remainingPoints;
     }
 
-    public void reduceRemainingPoints() {
-        this.remainingPoints -= batchSize;
+    public void setRemainingPoints(long remainingPoints) {
+        this.remainingPoints = remainingPoints;
     }
 
     public long getPointsInside() {
@@ -52,24 +48,7 @@ public class Test implements Serializable {
 
     public void addPointsInside(long pointsInside) {
         this.pointsInside += pointsInside;
-    }
-
-    public int getConnectedNodes() {
-        return connectedNodes;
-    }
-
-    public void addConnectedNodes() {
-        connectedNodes++;
-//        if (connectedNodes > mostConnectedNodes)
-//            mostConnectedNodes = connectedNodes;
-    }
-
-//    public int getMostConnectedNodes() {
-//        return mostConnectedNodes;
-//    }
-
-    public void reduceConnectedNodes() {
-        connectedNodes--;
+        remainingPoints -= batchSize;
     }
 
     public void setTimeBeforeTest(long timeBeforeTest) {
@@ -78,5 +57,13 @@ public class Test implements Serializable {
 
     public long execTime(long timeAfterTest) {
         return timeAfterTest - timeBeforeTest;
+    }
+
+    public int getIterations() {
+        return iterations;
+    }
+
+    public void addIterations() {
+        iterations++;
     }
 }

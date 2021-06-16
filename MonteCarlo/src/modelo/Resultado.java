@@ -31,7 +31,7 @@ public class Resultado {
         double promedioPi = totalPi / ejecuciones;
         double promedioTiempo = totalTiempo / ejecuciones;
         output += "Promedio Pi" + COMA + promedioPi + "\n";
-        output += "Promedio Tiempo" + COMA + promedioTiempo + "\n";
+        output += "Promedio Tiempo" + COMA + promedioTiempo + "ms\n";
         output += "Nodos" + COMA + nodos + "\n\n";
         return output;
     }

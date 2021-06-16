@@ -7,9 +7,10 @@ import javax.swing.*;
 public class Interfaz extends JFrame {
 
     private JButton btnTests, btnNewInput;
-    private JTextArea textAreaSeed, textAreaPoints;
+    private JTextArea textAreaSeed, textAreaPoints, textAreaNodes;
     private JFrame frame;
     private JPanel panel;
+    private JLabel lblPiFinal;
 
     /**
      * Create the frame
@@ -18,8 +19,6 @@ public class Interfaz extends JFrame {
         setLayout(new BorderLayout());
         frame = new JFrame();
         panel = new JPanel();
-//        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-//        add(panel, BorderLayout.CENTER);
 
         // Boton para correr pruebas
         Box vBox = Box.createVerticalBox();
@@ -27,23 +26,32 @@ public class Interfaz extends JFrame {
         btnTests = new JButton("Usar Tests");
         // Boton para usar datos ingresados por el usuario
         btnNewInput = new JButton("Usar Nuevos datos");
-
         vBox.add(btnTests);
-        vBox.add(btnNewInput);
 
-        textAreaSeed = new JTextArea("0");
+        textAreaSeed = new JTextArea("Semilla");
         textAreaSeed.setEditable(true);
         textAreaSeed.setBounds(138, 100, 245, 24);
         vBox.add(textAreaSeed);
 
-        textAreaPoints = new JTextArea("0");
+        textAreaPoints = new JTextArea("Puntos");
         textAreaPoints.setEditable(true);
         textAreaPoints.setBounds(138, 35, 245, 24);
         vBox.add(textAreaPoints);
 
+        textAreaNodes = new JTextArea("Nodos");
+        textAreaNodes.setEditable(true);
+        textAreaNodes.setBounds(138, 35, 245, 24);
+        vBox.add(textAreaNodes);
+        vBox.add(btnNewInput);
+
+        JLabel lblPi = new JLabel("Valor Pi:");
+        lblPiFinal = new JLabel();
+        vBox.add(lblPi);
+        vBox.add(lblPiFinal);
+
         panel.add(vBox, BoxLayout.X_AXIS);
 
-        frame.setSize(400, 400);
+        frame.setSize(400, 200);
         frame.getContentPane().add(BorderLayout.CENTER, panel);
         frame.setVisible(true);
     }
@@ -68,6 +76,13 @@ public class Interfaz extends JFrame {
         return textAreaPoints;
     }
 
+    public JLabel getLblPiFinal() {
+        return lblPiFinal;
+    }
+
+    public JTextArea getTextAreaNodes() {
+        return textAreaNodes;
+    }
 }
 
 //--------------------------------------------------------------
