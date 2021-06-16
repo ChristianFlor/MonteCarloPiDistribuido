@@ -28,6 +28,7 @@ public class ProcesadorPuntos implements Runnable {
             while (parametros[0] != -1) {
                 calcularPuntosAdentro();
                 parametros = servicioAsignarPuntos.asignarPuntos();
+                System.out.println("Trabajo terminado");
             }
             System.out.println("Terminado!");
             servicioRestarNodo.restarNodo();

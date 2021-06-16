@@ -15,7 +15,7 @@ public class ControladorMC implements Runnable, ServicioAsignarPuntos, ServicioR
 
     private static long batchPuntos = 100000;
     private static int pruebasPorTest = 10;
-    private static int nodosPorTest = 4;
+    private static int nodosPorTest = 5;
 
     private Interfaz frame;
 
