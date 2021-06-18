@@ -45,19 +45,20 @@ public class Interfaz extends JFrame {
         vBox.add(btnNewInput);
 
         JLabel lblPi = new JLabel("Valor Pi:");
-        lblPiFinal = new JLabel();
+        lblPiFinal = new JLabel("...");
         vBox.add(lblPi);
         vBox.add(lblPiFinal);
 
         JLabel lblNodes = new JLabel("Nodos conectados:");
-        lblNodesNum = new JLabel();
+        lblNodesNum = new JLabel("...");
         vBox.add(lblNodes);
         vBox.add(lblNodesNum);
 
         panel.add(vBox, BoxLayout.X_AXIS);
 
-        frame.setSize(400, 200);
+        frame.setSize(300, 220);
         frame.getContentPane().add(BorderLayout.CENTER, panel);
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 
@@ -86,7 +87,7 @@ public class Interfaz extends JFrame {
     }
 
     public JLabel getLblNodesNum() {
-        return lblPiFinal;
+        return lblNodesNum;
     }
 
     public JTextArea getTextAreaNodes() {
