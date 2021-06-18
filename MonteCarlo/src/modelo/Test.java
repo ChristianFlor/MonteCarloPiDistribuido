@@ -1,6 +1,7 @@
 package modelo;
 
 import java.io.Serializable;
+import java.util.Random;
 
 public class Test implements Serializable {
 
@@ -11,6 +12,8 @@ public class Test implements Serializable {
 
     private int iterations;
 
+    private Random rng;
+
     public Test(int id, int seed, long points, long batchSize) {
         super();
         this.id = id;
@@ -18,6 +21,7 @@ public class Test implements Serializable {
         this.points = points;
         this.remainingPoints = points;
         this.batchSize = batchSize;
+        rng = new Random(seed);
         pointsInside = 0;
         iterations = 0;
     }
@@ -27,7 +31,10 @@ public class Test implements Serializable {
     }
 
     public int getSeed() {
-        return seed;
+        return rng.nextInt();
+    }
+    public int getNextSeed() {
+        return rng.nextInt();
     }
 
     public long getPoints() {

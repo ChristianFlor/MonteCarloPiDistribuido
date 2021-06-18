@@ -15,7 +15,7 @@ public class ControladorMC implements Runnable, ServicioAsignarPuntos, ServicioR
 
     private static long batchPuntos = 100000;
     private static int pruebasPorTest = 10;
-    private static int nodosPorTest = 6;
+    private static int nodosPorTest = 5;
 
     private Interfaz frame;
 
@@ -53,7 +53,7 @@ public class ControladorMC implements Runnable, ServicioAsignarPuntos, ServicioR
             if (connectedNodes >= nodosPorTest) {
                 if (currentTest.getRemainingPoints() > 0) {
                     trabajo[0] = batchPuntos;
-                    trabajo[1] = currentTest.getSeed();
+                    trabajo[1] = currentTest.getNextSeed();
                 } else {
                     double pi = 4 * (double) currentTest.getPointsInside() / (double) currentTest.getPoints();
                     long execTime = currentTest.execTime(System.currentTimeMillis());
@@ -176,7 +176,11 @@ public class ControladorMC implements Runnable, ServicioAsignarPuntos, ServicioR
                 int nodos = Integer.parseInt(frame.getTextAreaNodes().getText());
                 puntosTotales = puntosTotales / 100;
                 puntosTotales = puntosTotales * 100;
-                batchPuntos = puntosTotales / 10;
+
+                // Si se cumple la condicion, los puntos se procesaran en pocos segundos independientemente de la cantidad de nodos de procesamiento que se usen.
+                if (puntosTotales < batchPuntos) {
+                    batchPuntos = puntosTotales / 100;
+                }
                 nodosPorTest = nodos;
                 pruebasPorTest = 1;
                 Test test = new Test(1, seed, puntosTotales, batchPuntos);
@@ -186,4 +190,3 @@ public class ControladorMC implements Runnable, ServicioAsignarPuntos, ServicioR
         });
     }
 }
-
